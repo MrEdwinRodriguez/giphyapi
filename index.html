@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Homework 6</title>
+   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+
+   <div id="animalButtons">
+
+   </div>
+
+   
+   <form id="animal-form">
+     <label for="animal-input">Add an animal</label>
+     <input type="text" id= animal-input><br>
+    
+     <input id="addAnimal" type="submit" value="Submit">
+   </form>
+
+
+   <div id="animals">
+
+   </div>
+   
+
+
+<script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
+<script>
+
+
+
+
+
+
+$(document).ready(function() {
+
+
+
+
+ 
+
+
+
+ 
+var animals = ['cat', 'dog', 'horse', 'turtle', 'frog', 'rabbit', 'sugar glider', 'gerbil', 'goat', 'chicken', 'pig', 'snake', 'bird','kangaroo', 'koala', 'shark', 'donkey'];
+
+
+
+//creates button for animal in array
+for (i=0; i<animals.length; i++){
+  
+
+  var animalBtn = $('<button>');
+  animalBtn.addClass('button')
+  animalBtn.attr('data-let', animals[i]);
+  animalBtn.text(animals[i]);
+  $('#animalButtons').append(animalBtn);
+
+
+}
+
+
+//makes each button clickable so that the images and ratings come up
+$(document).on('click', 'button', function(){
+//$('button').on('click', function(){
+$('#animals').empty()
+var animal = $(this).data('let');
+var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+$.ajax({
+  url: queryURL,
+  method: 'GET'
+
+})
+
+
+.done(function(response){
+
+  console.log(response);
+
+  var results = response.data;
+
+  //for loop to print out 10 images and ratings
+
+  for (i=0; i<results.length; i++){
+
+  var animalDiv = $('<div>');
+  var p = $('<p>');
+
+
+  p.text(results[i].rating);
+
+//creating images and defining data-still and data-animate
+var animalImage = $('<img>');
+animalImage.attr('src', results[i].images.fixed_height_still.url);
+animalImage.attr('data-still', results[i].images.fixed_height_still.url);
+animalImage.attr('data-animate', results[i].images.fixed_height.url);
+animalImage.addClass('changeAnimals')
+
+ animalDiv.append(animalImage)
+ $('#animals').append(animalDiv)
+
+
+
+
+
+
+
+
+
+
+
+animalDiv.append(p);
+animalDiv.append(animalImage);
+
+$('#animals').append(animalDiv);
+
+
+
+
+
+}
+});//end of .done function
+
+
+
+
+
+}); // end on.click
+
+
+
+
+//pause and animate
+
+var state = 'still';
+
+
+$('#animals').on('click', 'img', function(){
+ 
+            if ( state == 'still'){
+                $(this).attr('src', $(this).data('animate'));
+                $(this).attr('data-state', 'animate');
+                state='animate';
+                console.log(state);
+            }
+            else {
+                $(this).attr('src', $(this).data('still'));
+                $(this).attr('data-state', 'still');
+                state='still';
+            }
+
+
+}); //end of onclick for pause and animate 
+
+//accepts inputfrom form
+
+$('#addAnimal').on('click', function() {
+//$('#addAnimal').on('click', function() {
+
+ var newAnimal = $('#animal-input').val();
+
+console.log(newAnimal);
+
+  var animalBtn = $('<button>');
+  animalBtn.addClass('button')
+  animalBtn.attr('data-let', newAnimal);
+  animalBtn.text(newAnimal);
+  $('#animalButtons').append(animalBtn);
+ return false;
+});
+
+
+
+});  //end jquery
+
+</script>
+</body>
+</html>
